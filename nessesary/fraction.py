@@ -26,10 +26,10 @@ class Fraction:
 
     @denom.setter
     def denom(self, value):
-        if denom < 0:
-            numer = -numer
-            denom = -denom
-        if denom == 0:
+        if value < 0:
+            self.__numer = -self.numer
+            self.__denom = -value
+        if value == 0:
             raise ValueError("Denominator shouldn't be zero.")
         self.__denom = value
 
@@ -90,6 +90,42 @@ class Fraction:
         result = Fraction(numer, denom)
         return result
 
+    def __pow__(self, other):
+        """
+        Power Fraction.
+        >>> m1 = Fraction(2, 3)
+        >>> m2 = 2
+        >>> m3 = m1**m2
+        >>> print(m3)
+        4/9
+        >>> m1 = Fraction(-2, 3)
+        >>> m2 = 2
+        >>> m3 = m1**m2
+        >>> print(m3)
+        4/9
+        >>> m1 = Fraction(-2, 3)
+        >>> m2 = 3
+        >>> m3 = m1**m2
+        >>> print(m3)
+        -8/27
+        >>> m1 = Fraction(-2, 3)
+        >>> m2 = -3
+        >>> m3 = m1**m2
+        >>> print(m3)
+        -27/8
+        """
+        if isinstance(other, int):
+            if other > 0:
+                numer = self.numer**other
+                denom = self.denom**other
+                return Fraction(numer, denom)
+            elif other == 0:
+                return 1
+            elif other < 0:
+                numer = self.numer**(-other)
+                denom = self.denom**(-other)
+                return Fraction(denom, numer)
+
     def __str__(self) -> str:
         """
         Print Fraction Form.
@@ -106,4 +142,6 @@ class Fraction:
         >>> print(m4)
         5/2
         """
+        if self.numer == 0:
+            return "0"
         return f"{self.numer}/{self.denom}"
