@@ -1,5 +1,56 @@
 from math import gcd
 
+def frac_of_float(value, reduce=False):
+    """
+    Turn floating point number into Fraction form.
+    if agrument reduce = True It will turn
+    Fraction into reduce for before return.
+
+    >>> v1 = frac_of_float(0.4523)
+    >>> print(v1)
+    4523/10000
+
+    >>> v1 = frac_of_float(0.32, reduce=True)
+    >>> print(v1)
+    8/25
+
+    >>> v1 = frac_of_float(3213.42)
+    >>> print(v1)
+    321342/100
+
+    >>> v1 = frac_of_float(-52.43)
+    >>> print(v1)
+    -5243/100
+    """
+    if not isinstance(value, float):
+        raise TypeError("Input must be float")
+    
+    if 0 < value < 1:
+        point_index = str(value).find(".")
+        numer = int(str(value)[point_index+1:])
+        denom = int("1" + "0"*len(str(value)[point_index+1:]))
+        result = Fraction(numer, denom)
+    elif value < 0:
+        point_index = str(value).find(".")
+        before_point = str(value)[:point_index]
+        after_point = str(value)[point_index+1:]
+        numer = int(before_point + after_point)
+        denom = int("1" + "0"*len(str(value)[point_index+1:]))
+        result = Fraction(numer, denom)
+    elif value > 0:
+        point_index = str(value).find(".")
+        numer = int(str(value)[:point_index] + str(value)[point_index+1:])
+        denom = int("1" + "0"*len(str(value)[point_index+1:]))
+        result = Fraction(numer, denom)
+    else:
+        result = Fraction(0, 10)
+
+    if reduce:
+        result.reduce_frac()
+        return result
+    else:
+        return result
+
 class Fraction:
     def __init__(self, numer, denom):
         if numer < 0 and denom < 0:
