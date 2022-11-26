@@ -1,3 +1,5 @@
+from math import gcd
+
 class Fraction:
     def __init__(self, numer, denom):
         if numer < 0 and denom < 0:
@@ -125,6 +127,18 @@ class Fraction:
                 numer = self.numer**(-other)
                 denom = self.denom**(-other)
                 return Fraction(denom, numer)
+
+    def reduce_frac(self):
+        """
+        Turn Fraction into reduce form.
+        >>> m1 = Fraction(2, 4)
+        >>> m1.reduce_frac()
+        >>> print(m1)
+        1/2
+        """
+        temp = gcd(self.numer, self.denom)
+        self.numer = self.numer // temp
+        self.denom = self.denom // temp
 
     def __str__(self) -> str:
         """
