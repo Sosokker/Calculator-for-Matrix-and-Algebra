@@ -19,13 +19,13 @@ def is_neg(expr, i) -> bool:
     i -= 1
     return neg_sign%2 != 0
 
-def is_num(char: str):
+def is_num(char: str) -> bool:
     """
     Check if char agrument is number or not.
     """
     return char in ['1','2','3','4','5','6','7','8','9','0']
 
-def is_op(char: str):
+def is_op(char: str) -> bool:
     """
     Check if char agrument is operator or not.
     """
@@ -33,25 +33,27 @@ def is_op(char: str):
         return True
     return False
 
-def is_letter(char: str):
+def is_letter(char: str) -> bool:
     """
     Check if char agrument is string character or not.
     """
     return "a" <= char <= "z"
 
-def is_func(expr: str, i: int, result: str):
+def is_func(expr: str, i: int, result: str) -> bool:
     """
     Check if expression is a function or not.
     """
     result = ""
-    for i in range(len(expr)):
+    while i < len(expr):
         if not is_letter(expr[i]):
             i -= 1
             break
         result += expr[i]
-    return len(result) > 1
+        i += 1
+    new_index = i
+    return len(result) > 1, result, new_index
 
-def priority(char: str):
+def priority(char: str) -> int:
     """
     set precedence for each operator.
     This program use PEMDAS RULE as main rule 
@@ -89,8 +91,8 @@ def make_postfix(expr: str):
     >>> make_postfix(" 3*4 + 2*5")
     3 4 * 2 5 * +
 
-    >>> make_postfix("(2-3+4)*(5+6*7)
-    2 3 - 4 5 6 7 * + ( * + (
+    >>> make_postfix("(2-3+4)*(5+6*7)")
+    2 3 - 4 + 5 6 7 * + *
     """
 
 
@@ -104,7 +106,8 @@ def make_postfix(expr: str):
     i = 0
     while i < len(expr):
         char = expr[i]
-        if char == " ":
+        func_check, temp, last_index = is_func(expr, i, temp)
+        if char == " " or char == "," or char == ":":
             i += 1
             continue
 
@@ -119,31 +122,32 @@ def make_postfix(expr: str):
         elif char == ")":
             found = False
             while len(op_stack) != 0:
-                head = op_stack.pop()
-                if head == "(":
+                top = op_stack.pop()
+                if top == "(":
                     found = True
                     break
                 else:
-                    result += head
+                    result += top
                     result += " "
             i += 1
             if not found:
                 raise ValueError("Parentheses Error!")
 
-        elif is_op(char) or is_func(expr, i, temp):
+        elif is_op(char) or func_check:
             isfunc = len(temp) > 1
             if (not isfunc) and (char == "-"):
                 if i == 0 or is_op(expr[i-1]):
                     neg = is_neg(expr, i)
+                    i += 1
                     continue
 
             while len(op_stack) != 0:
-                head = op_stack[-1]
-                priority1 = (priority(head) < priority(char))
-                priority2 = (priority(head) == priority(char))
-                if char == "(" or head == "(" or priority1 or (priority2 and char == "^"):
+                top = op_stack[-1]
+                priority1 = (priority(top) < priority(char))
+                priority2 = (priority(top) == priority(char))
+                if char == "(" or top == "(" or priority1 or (priority2 and char == "^"):
                      break
-                result += head
+                result += top
                 op_stack.pop()
                 result += " "
 
@@ -151,6 +155,7 @@ def make_postfix(expr: str):
                 op_stack.append(add_neg_sign(temp, neg))
                 neg = False
                 temp = ""
+                i = last_index
             else:
                 op_stack.append(char)
             i += 1
@@ -166,8 +171,8 @@ def make_postfix(expr: str):
             raise ValueError("Can't Parse this Letter!")
         
     while len(op_stack) != 0:
-        head = op_stack.pop()
-        result += head
+        top = op_stack.pop()
+        result += top
         result += " "
     i += 1
     return result[:len(result)-1]
