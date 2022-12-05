@@ -76,6 +76,18 @@ class Matrix:
         new_matrix = Matrix(arr)
         return new_matrix
 
+    def new_matrix(a,i):#FUNCTION TO FIND THE NEW MATRIX
+        arr = a.copy_matrix() 
+        if len(arr) == 2:
+            
+            return arr
+        else:
+            arr.pop(0)
+            for j in arr:
+                j.pop(i)
+                
+            return arr
+
     def determinant(self):
         """
         Using Cofactor Expanion.
@@ -96,14 +108,11 @@ class Matrix:
             return self.array[0][0] * self.array[1][1] - self.array[1][0] * self.array[0][1]
 
         det = 0
-        for col in range(self.column):
-            temp = self.copy_matrix()   
-            temp.array = temp.array[1:]
-            for r in range(len(temp.array)):
-                temp.array[r] = temp.array[r][0:col] + temp.array[r][col+1:]
-            
-            det += (-1)**(col) * self.array[0][col] * temp.determinant()
-        
+        for col in range(len(self.array)):
+            temp = self.copy_matrix()
+            minor = lambda i, j : [row[:j] + row[j+1:] for row in (temp.array[:i]+temp.array[i+1:])]
+            temp.array = minor(0,col)
+            det += ((-1)**col)*self.array[0][col]*temp.determinant()
         return det
 
     def tranpose(self):
