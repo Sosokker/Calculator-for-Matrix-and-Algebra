@@ -78,65 +78,33 @@ class Matrix:
 
     def determinant(self):
         """
+        Using Cofactor Expanion.
+        |M| = sum[M(1,i)*Cofactor(M(1,i)) from i = 1 to n]
+
         Find determinant of Square Matrix
         >>> m1 = Matrix([[1,2,3],[1,2,3],[1,2,3]])
-        >>> d = m1.determinant()
-        >>> d
+        >>> m1.determinant()
         0
+        >>> m2 = Matrix([[13212,1,3,8321],[27,2,4,6],[321,5,2,-14],[312,21,211,3]])
+        >>> m2.determinant()
+        858575226
         """
         if self.row != self.column:
             raise ValueError(f"Can't Find determinant of {self.row} x {self.column} Matrix")
 
-        if self.row == 2 and self.column == 2:
+        if len(self.array) == 2 and len(self.array[0]) == 2:
             return self.array[0][0] * self.array[1][1] - self.array[1][0] * self.array[0][1]
 
-        # value = 0
-        # index_cut_column = [range(self.row)]
-
-        # for column_to_cut in index_cut_column:
-        #     temp_matrix = self.copy_matrix()
-        #     temp_matrix.array = temp_matrix.array[1:]
-        #     row_count = len(temp_matrix.array)
-
-        #     for row_index in range(row_count):
-        #         temp_matrix.array[row_index] = temp_matrix.array[row_index][0:column_to_cut] + temp_matrix.array[row_index][column_to_cut+1:]
-
-        #     coeff_sign = (-1) ** (column_to_cut % 2)
-        #     sub_determinant = temp_matrix.determinant()
-        #     value = coeff_sign * self.array[0][column_to_cut] * sub_determinant
-        value = 0
-        for x in range(0, self.row):
-
-            i = 0
-            j = x
+        det = 0
+        for col in range(self.column):
+            temp = self.copy_matrix()   
+            temp.array = temp.array[1:]
+            for r in range(len(temp.array)):
+                temp.array[r] = temp.array[r][0:col] + temp.array[r][col+1:]
             
-            sum_mul = 1
-            for y in range(0, self.row):
-                sum_mul *= self.array[i][j]
-                i += 1
-                j += 1
-                if (j >= self.row):
-                    j = 0
-
-            value += sum_mul
-
-        sum_sub = 0
-        for x in range(0, self.row):
-            
-            i = 0
-            j = self.row - 1 - x
-            
-            sum_mul = 1
-            for y in range(0, self.row):
-                sum_mul *= self.array[i][j]
-                i += 1
-                j -= 1
-                if (j < 0):
-                    j = self.row - 1
-            sum_sub -= sum_mul
-
-        determinant = value + sum_sub
-        return determinant
+            det += (-1)**(col) * self.array[0][col] * temp.determinant()
+        
+        return det
 
     def tranpose(self):
         """
@@ -163,8 +131,3 @@ if __name__ == "__main__":
     doctest.testmod()
     # Use the following line INSTEAD if you want to print all tests anyway.
     # doctest.testmod(verbose = True)
-
-
-m1 = Matrix([[1,1,1],[2,2,2],[3,3,3]])
-d = m1.determinant()
-print(d)
