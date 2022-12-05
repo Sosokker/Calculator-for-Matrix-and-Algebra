@@ -54,16 +54,27 @@ class Matrix:
         >>> m3 = m1 * m2
         >>> m3.array
         [[7, 10], [15, 22]]
+        >>> m1 = Matrix([[1, 2], [3, 4]])
+        >>> m2 = 2
+        >>> m4 = m1 * m2
+        >>> m4.array
+        [[2, 4], [6, 8]]
         """
-        if  self.column == other.row:
-            new_matrix = Matrix([[0 for i in range(other.column)] for k in range(self.row)])
-            for row_index in range(self.row): 
-                for col_index in range(self.column):
-                    for k in range(other.row):
-                        new_matrix.array[row_index][col_index] += self.array[row_index][k] * other.array[k][col_index]
-            return new_matrix
+        if isinstance(other, int) or isinstance(other, float):
+            for row in range(self.row):
+                for col in range(self.column):
+                    self.array[row][col] = self.array[row][col] * other
+            return self
         else:
-            raise ValueError("Can't multiply these matrix")
+            if  self.column == other.row:
+                new_matrix = Matrix([[0 for i in range(other.column)] for k in range(self.row)])
+                for row_index in range(self.row): 
+                    for col_index in range(self.column):
+                        for k in range(other.row):
+                            new_matrix.array[row_index][col_index] += self.array[row_index][k] * other.array[k][col_index]
+                return new_matrix
+            else:
+                raise ValueError("Can't multiply these matrix")
 
     def copy_matrix(self):
         """
@@ -130,6 +141,7 @@ class Matrix:
         return new_matrix
 
     def inverse(self):
+        det = self.determinant()
         pass
 
     def __str__(self):
