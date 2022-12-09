@@ -1,20 +1,44 @@
 import json
 import os
 
-def read_write_command(com):
+def write_command(com, inp, out) -> None:
     filename = "history.json"
-    file_data = {}
-
     try:
         with open(filename, "r") as file:
-            file_data = json.load(file)
-    except :
-        pass
+            number_dict = json.load(file)
+        with open(filename, "w") as file1:
+            lastest = 0
+            for key in number_dict.keys():
+                if int(key) >= int(lastest):
+                    lastest = int(key)
+            data = {}
+            data["command"] = com
+            data["input"] = inp
+            data["output"] = out
+            number_dict[lastest+1] = data
+            json.dump(number_dict, file1, indent=4)
+    except FileNotFoundError:
+        data = {}
+        number_dict = {}
+        # {command: , input: , output}
+        with open(filename, "w+") as file:
+            data["command"] = com
+            data["input"] = inp
+            data["output"] = out
+            number_dict[1] = data
+            json.dump(number_dict, file, indent=4)
 
-    file_data = {2:com}
+def clear() -> bool:
+    filename = "history.json"
+    try:
+        open(filename, 'w').close()
+        return True
+    except FileNotFoundError:
+        return False
 
-    with open(filename, "w") as file:
-        json.dump(file_data, file, indent = 4)
-
-def delete():
-    os.remove("history.json")
+def delete() -> bool:
+    try:
+        os.remove("history.json")
+        return True
+    except:
+        return False
