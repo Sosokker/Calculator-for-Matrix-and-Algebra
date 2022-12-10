@@ -7,6 +7,9 @@ def add_neg_sign(expr: str, is_neg: bool) -> str:
         expr = "-" + expr
     return expr
 
+def add_exp_sign(expr):
+    return expr.replace("^", "**")
+
 def is_neg(expr, i) -> bool:
     """
     Check if input expression is negative or not.
@@ -186,12 +189,13 @@ def insert_mul_sign(expr):
     x*x
     >>> insert_mul_sign("xy+xsin(xy)+12x+y")
     x*y+x*sin(x*y)+12*x+y
+    >>> insert_mul_sign("(12x)(1+(12y+sin(x^3-2))(x+2))")
+    (12x)*(1+(12*y+sin(x^3-2))*(x+2))
     """
     function_list = [
                     "sin","cos","tan", "cosec", "sec", "cot",
                     "arcsin","arccos","arctan", "arcsec", 
-                    "arccosec", "arccot", "asin", "acos", 
-                    "atan", "asec", "acosec", "acot"
+                    "arccosec", "arccot"
                     ]
     i = 0
     result = ""
@@ -207,7 +211,6 @@ def insert_mul_sign(expr):
     while i < len(expr):
         char = expr[i]
         check_func, f_name, last_index = is_func(expr, i, f_name)
-
         if is_num(char):
             num, i = parsing_num(expr, i)
             result += add_neg_sign(num, neg)
@@ -216,12 +219,12 @@ def insert_mul_sign(expr):
             if expr[-1] != char:
                 if expr[i] != ")" and not is_op(expr[i]):
                     result += "*"
+                elif expr[i] == "(":
+                    result += "*"
         elif char == ")":
             try:
-                c = expr[i+1]
-                result += char
-                if c != ")":
-                    result += "*"
+                if expr[i+1] != ")" and is_op(expr[i+1]):
+                    result += ")*"
             except IndexError:
                 result += char
             i += 1
@@ -231,10 +234,15 @@ def insert_mul_sign(expr):
             i += 1
 
         elif check_func:
+            for f_check in function_list:
+                if f_check in f_name:
+                    real_func_name = f_check
+
             check_list = [1 for n in function_list if n in f_name]
             if sum(check_list) > 0:
-                result += f_name
-                i = last_index
+                result += f_name.replace(real_func_name, "*")
+                result += real_func_name
+                i = last_index + 1
             else:
                 count = len(f_name)
                 for ind in range(len(f_name)+1):
@@ -254,11 +262,68 @@ def insert_mul_sign(expr):
 
     return result
 
+import re
 
+def parse_poly(expr: str) -> list:
+    """
+    Parse string of basic polynomial expression.
+    Note: Only Specific form of polynomial that
+    this function can parse.
+    """
+    pattern = re.compile('([-+]?\s*\d*\.?\d*)(x?\^?\d?)')
+    expo_pattern = re.compile('x\^?(\d)?')
+    coeff_var_list = pattern.findall(expr)
+    store = {}
+    highest_expo = 0
+    for coeff, var in coeff_var_list:
+        if not coeff: 
+            coeff = 0
+        elif coeff == '-': 
+            coeff = -1
+        elif coeff == '+': 
+            coeff = 1
+        try:
+            coeff = eval(coeff)
+        except:
+            pass
+
+        expo = expo_pattern.findall(var)
+        if len(expo) == 0:
+            expo = 0
+        elif '' in expo:
+            expo = 1
+        else:
+            expo = expo[0]
+        try:
+            expo = eval(expo)
+        except:
+            pass
+        
+        if expo >= highest_expo:
+            highest_expo = expo
+
+        temp = [coeff, expo]
+        if var not in store:
+            store[var] = temp
+        else:
+            store[var][0] += temp[0]
+    print(store)
+    result = [0 for i in range(highest_expo+1)]
+    for item in store.values():
+        coeff = item[0]
+        expo = item[1]
+        result[expo] = coeff
+    return result
+
+# print(parse_poly("-x^2+2x"))
 # print(make_postfix("(2-3+4)*(5+6*7)"))
 # print(make_postfix("12sin(x^2)+(4x+12*3)-5"))
 # print(insert_mul_sign("12x"))
 # print(insert_mul_sign("5x+12y+421abcde+1"))
 # print(insert_mul_sign("12((x+12x)x)"))
 # print(insert_mul_sign("xsin(x^2)"))
+# print(insert_mul_sign("xy+xsin(xy)+12x+y"))
 # print(insert_mul_sign("5(1+2*3^12)(12-5(4^2)) + (1-3*4)12"))
+# print(insert_mul_sign("(1+2)(3+4)"))
+# print(add_exp_sign("x^2^3"))
+# print(parse_poly("x^4+1+12x^3-3x^2+5"))
