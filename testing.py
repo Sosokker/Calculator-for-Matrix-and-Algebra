@@ -1,11 +1,10 @@
 from nessesary.polynomial import Polynomial
 from nessesary.fraction import frac_of_float, Fraction, to_fraction
 from nessesary.matrix import Matrix
-from nessesary.parser.parser import insert_mul_sign, parse_poly
+from nessesary.parser.parser import insert_mul_sign, parse_poly, make_postfix
 from nessesary.equation.processing import poly_expand, solver, simplify, change_side
 
 # -------------------------- POLYNOMIAL TEST --------------------------
-
 
 p1 = Polynomial("x^3+3112+1231+x^2+2131+x^3")
 p2 = Polynomial([1,2,3,4,5,6,7,8,9,10])
@@ -15,20 +14,19 @@ p5 = Polynomial("-4x^9 + 1")
 p6 = Polynomial("x+1")
 p7 = Polynomial("3x^2-2x^2+2x+1")
 
-assert str(p1) == "2x^3+1x^2+6474"
-assert str(p2) == "10x^9+9x^8+8x^7+7x^6+6x^5+5x^4+4x^3+3x^2+2x+1"
-assert str(p3) == "4x^4+3x^3+2x^2+3x+4"
-assert str(p4) == "x^9+32x^4-5x^2+1212"
-assert str(p5) == "-4x^9+1"
+assert str(p1) == "2x^3+x^2+6474x^0"
+assert str(p2) == "10x^9+9x^8+8x^7+7x^6+6x^5+5x^4+4x^3+3x^2+2x^1+x^0"
+assert str(p3) == "4x^4+3x^3+2x^2+3x^1+4x^0"
+assert str(p4) == "x^9+32x^4-5x^2+1212x^0"
+assert str(p5) == "-4x^9+x^0"
 assert str(p6) == "1x+1"
-assert str(p7) == "x^2+2x+1"
+assert str(p7) == "x^2+2x^1+x^0"
 assert Polynomial("3x+2").to_str() == "3x+2"
 
 assert p7.solve() == [{'real': -1.0, 'imag': 0}]
 assert Polynomial("x+1").solve() == [{'real': -1.0, 'imag': 0}]
 assert Polynomial("x+3123 -312321312+281x-32131x").solve() == [{'real': -9806.21649031366761, 'imag': 0}]
 assert Polynomial("23x^2-312x+321x^2-3+6+0+0").solve() == [{'real': 0.009719543319502776, 'imag': 0}, {'real': 0.8972572008665437, 'imag': 0}]
-
 
 # -------------------------- FRACTION TEST --------------------------
 
@@ -42,3 +40,9 @@ p3 = p1-p2
 p3.reduce_frac()
 
 assert str(p3) == str(Fraction(9068075, 50114596))
+
+# -------------------------- PROCESSING TEST --------------------------
+
+print(poly_expand('(3x+2)^3+4x+5-2+(5x^2)^3'))
+print(poly_expand('2*(x+3)^2-5x^3+4'))
+print(poly_expand('(x)-x'))
