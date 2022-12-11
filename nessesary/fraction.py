@@ -99,7 +99,9 @@ class Fraction:
         numer = self.numer*other.denom + other.numer*self.denom
         result = Fraction(numer, denom)
         return result
-       
+
+    def __radd__(self, other):
+        return self + other
 
     def __sub__(self, other):
         """
@@ -115,6 +117,9 @@ class Fraction:
         result = Fraction(numer, denom)
         return result
 
+    def __radd__(self, other):
+        return self - other
+
     def __mul__(self, other):
         """
         Multiply Fraction.
@@ -124,10 +129,19 @@ class Fraction:
         >>> print(m3)
         10/21
         """
-        denom = self.denom * other.denom
-        numer = self.numer * other.numer
-        result = Fraction(numer, denom)
-        return result
+        if isinstance(other, Fraction):
+            denom = self.denom * other.denom
+            numer = self.numer * other.numer
+            result = Fraction(numer, denom)
+            return result
+        elif isinstance(other, (int, float)):
+            denom = self.denom * other
+            numer = self.numer * other
+            result = Fraction(numer, denom)
+            return result
+
+    def __rmul__(self, other):
+        return self * other
 
     def __truediv__(self, other):
         """
@@ -191,6 +205,31 @@ class Fraction:
         self.numer = self.numer // temp
         self.denom = self.denom // temp
 
+    def __eq__(self, other):
+        if isinstance(other, float):
+            return self.floating == other
+        elif isinstance(other, int):
+            return int(self.floating) == int(other)
+        elif isinstance(other, Fraction):
+            self.reduce_frac()
+            other.reduce_frac()
+            return (self.numer == other.numer) and (self.denom == other.denom)
+
+    def __gt__(self, other):
+        if isinstance(other, (int, float)):
+            return self.floating > other
+        elif isinstance(other, Fraction):
+            return self.floating > other.floating
+
+    def __lt__(self, other):
+        if isinstance(other, (int, float)):
+            return self.floating < other
+        elif isinstance(other, Fraction):
+            return self.floating < other.floating
+
+    def __neg__(self):
+        self.numer = -1*self.numer
+
     def __str__(self) -> str:
         """
         Print Fraction Form.
@@ -210,3 +249,27 @@ class Fraction:
         if self.numer == 0:
             return "0"
         return f"{self.numer}/{self.denom}"
+
+def to_fraction(num, reduce=False) -> Fraction:
+    """
+    Turn float or int into Fraction.
+
+    >>> a = to_fraction(10)
+    >>> a
+    10/1
+
+    >>> a = to_fraction(29.732)
+    >>> print(a)
+    29732/1000
+    """
+    try:
+        inum = int(num)
+        fnum = float(num)
+        if inum - fnum == 0:
+            raise ValueError
+        else:            
+            num = frac_of_float(fnum, reduce)
+            to_insert = str(num).split("/")
+            return Fraction(eval(to_insert[0]), eval(to_insert[1]))
+    except:
+        return Fraction(inum, 1)
