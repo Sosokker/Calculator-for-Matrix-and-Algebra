@@ -1,5 +1,6 @@
 from nessesary.polynomial import Polynomial
-from nessesary.parser.parser import is_letter, is_op
+from nessesary.parser.parser import is_op, insert_mul_sign, is_num
+import re
 
 def change_side(equa:str):
     """
@@ -57,43 +58,111 @@ def solver(expr:str):
     except:
         raise ValueError
 
-def poly_expand(expr:str):
+def poly_expand(expr:str) -> str:
     """
     Add Polynomial Text to all element that
     can make polynomial.
     >>> poly_expand("(3x+2)^3+4x+5-2+(5x^2)^3")
-    'Polynomial("3x+2")**3+Polynomial("4x")+Polynomial("5x^2")**3'
+    'Polynomial((3x+2")**3+Polynomial("4x")+Polynomial("5x^2")**3'
     """
-    i = 0
-    result = ""
+    # i = 0
+    # result = ""
+    # found = False
+    # added = False
+    # while i < len(expr):
+    #     char = expr[i]
+    #     if char == "(":
+    #         result += "Polynomial("
+    #         i += 1
+    #         found = True
+    #     else:
+    #         if not found:
+    #             if added and is_op(char):
+    #                 result += f"){char}"
+
+    #                 added = False
+    #             if is_op(char) and char != "^":
+    #                 result += f"{char}Polynomial("
+    #                 i += 1
+    #                 added = True
+    #                 found = True
+    #                 continue
+    #         result += char
+    #         i += 1
+
+    #     if char == ")":
+    #         found = False
+
+    # result = result.replace("++", "+").replace("--","-")
+    # result = result.replace("^^", "^")
+    # result = result.replace("))", ")")
+    # result = result.replace("^", "**")
+    # result = result.replace("Polynomial(Polynomial(", "Polynomial(")
+    # # return result
+    # result = ''
+    # # ['(', '3x', '+', '2', ')', '^', '3', '+', '4x', '+', '5', '-', '2', '+', '(', '5x', '^', '2', ')', '^', '3']
+    pattern = re.compile('\[[^\]]+\]|<[^>]+>|\{[^\}]+\}|\d+[eE][-+]\d+|\w+(?=\()|\w+|[-+\/*%]|.')
+    coeff_var_list = pattern.findall(expr)
     found = False
-    added = False
-    while i < len(expr):
-        char = expr[i]
-        if char == "(":
-            result += "Polynomial("
-            i += 1
-            found = True
-        else:
-            if not found:
-                if added and is_op(char):
-                    result += f"){char}"
-
-                    added = False
-                if is_op(char) and char != "^":
-                    result += f"{char}Polynomial("
-                    i += 1
-                    added = True
-                    continue
+    result = ''
+    for char in coeff_var_list:
+        if is_num(char):
             result += char
-            i += 1
+            continue
 
-        if char == ")":
-            found = False
+        if is_op(char):
+            if char == '(':
+                result += 'Polynomial('
+                found = True
+                continue
+            elif char == '^':
+                result += char
+                continue
+            else:
+                result += char
+                continue
+        if char == ')':
+            if found:
+                result += char
+                found = False
+                continue
+            else:
+                raise ValueError
 
-    result = result.replace("++", "+").replace("--","-")
-    result = result.replace("^^", "^")
-    result = result.replace("))", ")")
-    result = result.replace("^", "**")
-    result = result.replace("Polynomial(Polynomial(", "Polynomial(")
-    return result
+        if not is_num(char):
+            if found:
+                result += char
+                continue
+            else:
+                result += f'Polynomial({char})'
+    
+    # print(expr, result)
+    # Match:Whole poly | Group1:inside Parentheses | Group2:Expo
+    pattern = re.compile('([+-^$|])\w+(?=\()\(([^()]*)\)+(\^?\d?)')
+    coeff_var_list = pattern.findall(result)
+    collected_list = []
+    for tup in coeff_var_list: # sign, poly, expo
+        sign = tup[0]
+        if sign == 'P':
+            sign = '+'
+        poly = tup[1].replace("\"","")
+        expo = tup[2]
+        if expo == '':
+            expo = 1
+        else:
+            expo = int(expo[1:])
+    if sign == '-':
+        text = f"{sign}{poly}"
+    elif sign == '+':
+        text = f"{poly}"
+    to_append = Polynomial(text)**expo
+    collected_list.append(to_append)
+
+    res = None
+    for p in collected_list:
+        if res == None:
+            res = p
+        else:
+            res += p
+
+    return res
