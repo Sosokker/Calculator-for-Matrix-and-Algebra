@@ -46,7 +46,7 @@ class Matrix:
                 self.array[row_index][column_index] -= other.array[row_index][column_index]
         return self
 
-    def __mul__(self, other):
+    def __mul__(self, other: "int | float"):
         """
         Multiply matrix up and those matrix need same dimesional.
         >>> m1 = Matrix([[1, 2], [3, 4]])
@@ -141,8 +141,30 @@ class Matrix:
         return new_matrix
 
     def inverse(self):
+        """
+        Find Inverse Matrix.
+        >>> m1 = Matrix([[4, 3],[3, 2]])
+        >>> m1.inverse().array
+        [[-2.0, 3.0], [3.0, -4.0]]
+        >>> m1 = Matrix([[3, 0, 2],[2, 0, -2],[0, 1, 1]])
+        >>> m1.inverse().array
+        [[0.2, 0.2, 0.0],[-0.2, 0.3, 1.0],[0.2, -0.3, 0.0]]
+        """
         det = self.determinant()
-        pass
+        if det==0:
+            raise ValueError(f"Can't Find Inverse of this Matrix")
+
+        if len(self.array) == 2 and len(self.array[0]) == 2:
+            return Matrix([[self.array[1][1], -self.array[0][1]], [-self.array[1][0], self.array[0][0]]]) * (1/det)
+
+        temp = self.copy_matrix()
+        for row in range(self.row):
+            for col in range(self.column):
+                minor = lambda i, j : [row[:j] + row[j+1:] for row in (temp.array[:i]+temp.array[i+1:])]
+                minor_det = Matrix(minor(col, row)).determinant()
+                temp.array[row][col] = minor_det * (-1)**(row+col+2)
+        temp = temp.tranpose()
+        return temp * (1/det)
 
     def __str__(self):
        return f'Matrix({self.array})'
