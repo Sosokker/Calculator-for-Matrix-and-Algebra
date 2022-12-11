@@ -1,5 +1,6 @@
 from nessesary.parser.parser import parse_poly
 from nessesary.fraction import to_fraction
+from math import acos, cos, pi
 
 class Polynomial:
     def __init__(self, poly, fracmode=False):
@@ -20,6 +21,11 @@ class Polynomial:
                     self.coeff[c_index] = to_fraction(self.coeff[c_index])
                 except:
                     raise ValueError("Can't turn all number into fraction.")
+
+        while len(self.coeff) < 3:
+            self.coeff.append(0)
+
+        self.degree = len(self.coeff)
 
     #[degree0, degree1, degree2]
     def __add__(self, other):
@@ -165,48 +171,103 @@ class Polynomial:
 
         return result
 
-    def solve(self) -> tuple:
+    def solve(self) -> dict:
         degree = len(self.coeff) - 1
+        sol = [{"real":0, "imag":0}, {"real":0, "imag":0}]
         if degree == 2:
             a, b, c = self.coeff[2], self.coeff[1], self.coeff[0]
             if a == 0:
                 if b == 0:
                     if c == 0:
-                        return (0, None)
+                        return sol
                     else:
-                        return (c, None)
+                        sol[0]["real"] = c
+                        del sol[1]
+                        return sol
                 else:
-                    return (-c/b, None)
+                    sol[0]["real"] = -c/b
+                    del sol[1]
+                    return sol
             else:
                 root_term = b**2-4*a*c
                 if root_term < 0:
-                    res1 = f"({-b}+{to_imag(root_term**0.5)})/{2*a}"
-                    res2 = f"({-b}-{to_imag(root_term**0.5)})/{2*a}"
-                    return (res1, res2)
+                    # res1 = f"({-b}+{to_imag(root_term**0.5)})/{2*a}"
+                    # res2 = f"({-b}-{to_imag(root_term**0.5)})/{2*a}"
+                    sol[0]["real"] = -b/(2*a)
+                    sol[1]["real"] = -b/(2*a)
+                    sol[0]["imag"] = (abs(root_term)**0.5)/2*a
+                    sol[1]["imag"] = (-abs(root_term)**0.5)/2*a
+                    return sol
                 else:
                     if root_term == 0:
-                        return (-b/(2*a), None)
+                        sol[0]["real"] = -b/(2*a)
+                        del sol[1]
+                        return sol
                     else:
-                        try:
-                            res1 = (-b-(root_term)**0.5)/(2*a)
-                            res2 = (-b+(root_term)**0.5)/(2*a)
-                        except TypeError:
-                            res1 = (-b-(root_term)**0.5)/(2*a)
-                            res2 = (-b+(root_term)**0.5)/(2*a)                
-                        return (res1, res2)
+                        sol[0]["real"] = (-b-(root_term)**0.5)/(2*a)
+                        sol[1]["real"] = (-b+(root_term)**0.5)/(2*a)            
+                        return sol
+        
+        elif degree == 3:
+            a, b = self.coeff[3], self.coeff[2]
+            c, d = self.coeff[1], self.coeff[0]
+
+            b, c, d = b/a, c/a, d/a
+
+            temp_q = 3.0*c-(b*b)/9.0
+            temp_r = (-(27.0*d)+b*(9*c-2.0*(b * b)))/54.0
+            first_term = b/3
+            temp_check = (temp_q**3)+(temp_r**2)
+            sol = [{"real":0, "imag":0},{"real":0, "imag":0},{"real":0, "imag":0}]
+
+            if temp_check > 0:
+                temp = 1/3
+                i = temp_r + (temp_check**0.5)
+                if i < 0:
+                    i = -(-i**(temp))
+                else:
+                    i = i**temp
+                j = temp_r - (temp_check)**0.5
+                if j < 0:
+                    j = -(-j**(temp))
+                else:
+                    j = j**temp
+
+                sol[0]["real"] = -first_term + i + j
+                sol[2]["real"] = -(first_term+((i+j)/2))
+                sol[1]["real"] = (first_term+((i+j)/2))
+                sol[1]["imag"] = (3**0.5) * (-i+j)/2
+                sol[2]["imag"] = -sol[1]["imag"]
+
+                return sol
+
+            elif temp_check == 0:
+                if temp_r < 0:
+                    new_r = (-temp_r)**(1/3)
+                else:
+                    new_r = temp_r**(1/3)
+
+                sol[0]["real"] = -first_term+2*new_r
+                sol[1]["real"] = -(new_r+first_term)
+                sol[2]["real"] = sol[1]["real"]
+
+                return sol
+
+            else:
+                temp2 = acos(temp_r/(-temp_q*-temp_q*-temp_q)**0.5)
+                temp = -first_term + 2*temp_q**0.5
+
+                sol[0]["real"] = temp*cos(temp2/3)
+                sol[1]["real"] = temp*cos((temp2+2*pi)/3)
+                sol[2]["real"] = temp*cos((temp2+4*pi)/3)
+                return sol
+
+        elif degree == 4:
+            pass
 
     def __str__(self) -> str:
         return self.string_form
 
-def to_imag(num) -> str:
-    """
-    >>> to_imag(-10)
-    '10i'
-    >>> to_imag(-10.12)
-    '10.12i'
-    """
-    num = abs(num)
-    return f"{num}i"
 
 # p1 = Polynomial("x^2+2x+1", fracmode=True)
 # p2 = Polynomial("x^2+2x+1", fracmode=False)
