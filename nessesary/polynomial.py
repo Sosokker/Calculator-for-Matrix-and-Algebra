@@ -134,7 +134,7 @@ class Polynomial:
         #     return "+".join(result)
         # else:
         #     return "0"
-
+        last_count = len(str(self.coeff[-1]))
         result = []
         i = len(self.coeff) - 1
         while i >= 0:
@@ -168,8 +168,13 @@ class Polynomial:
         if result[0] == "+" or result[0] == "-":
             del result[0]
         result = "".join(result)
-
-        return result
+        
+        if self.coeff[-1] > 0:
+            return result[last_count:]
+        elif self.coeff[-1] < 0:
+            return result[last_count-1:]
+        else:
+            return result
 
     def solve(self) -> dict:
         degree = len(self.coeff) - 1
@@ -266,7 +271,7 @@ class Polynomial:
             pass
 
     def __str__(self) -> str:
-        return self.string_form
+        return self.to_str()
 
 
 # p1 = Polynomial("x^2+2x+1", fracmode=True)
