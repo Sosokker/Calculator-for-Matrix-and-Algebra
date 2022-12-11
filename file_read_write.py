@@ -1,4 +1,5 @@
 import json
+from json import JSONDecodeError
 import os
 
 def write_command(com, inp, out) -> None:
@@ -42,3 +43,15 @@ def delete() -> bool:
         return True
     except:
         return False
+
+def read_history():
+    filename = "history.json"
+    try:
+        with open(filename, "r") as file:
+            number_dict = json.load(file)
+            for line, data in number_dict.items():
+                print(f"    ({line}) Command: {data['command']} | Input: {data['input']} | Output: {data['output']}")
+    except FileNotFoundError:
+        raise FileNotFoundError("History file not found! Maybe program hasn't been saved yet.")
+    except JSONDecodeError:
+        print("History is empty.")
