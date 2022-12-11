@@ -7,11 +7,11 @@ class Polynomial:
         if isinstance(poly, str):
             self.coeff = parse_poly(poly)
             self.degree = len(parse_poly(poly)) - 1
-            self.string_form = poly
+
         elif isinstance(poly, list):
             self.coeff = poly
             self.degree = len(poly) - 1
-            self.string_form = self.to_str()
+
         else:
             raise ValueError
         self.fracmode = fracmode
@@ -37,7 +37,7 @@ class Polynomial:
         '2x^4+2x^3+2x^2+2x+2'
         """
         if isinstance(other, Polynomial):
-            large_index = max([self.degree, other.degree])
+            large_index = max([len(self.coeff), len(other.coeff)])
             temp = [0 for i in range(large_index)]
             result = Polynomial(temp)
             for degree_index in range(self.degree):
@@ -47,6 +47,9 @@ class Polynomial:
             result = Polynomial(self.coeff)
             result.coeff[0] += other
             return result
+
+    def __radd__(self, other):
+        return self+other
 
     def __sub__(self, other):
         """
@@ -67,6 +70,9 @@ class Polynomial:
             result = Polynomial(self.coeff)
             result.coeff[0] -= other
             return result
+
+    def __rsub__(self, other):
+        return self-other
 
     def __mul__(self, other):
         """
@@ -89,6 +95,9 @@ class Polynomial:
                 result[self_index+other_index] += self.coeff[self_index]*other
             poly_result = Polynomial(result)
             return poly_result
+
+    def __rmul__(self, other):
+        return self*other
 
     def __pow__(self, other):
         """
