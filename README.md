@@ -2,6 +2,8 @@
 
 This is Text-based user interface program that use to solve matrix and algebra problems.
 
+[Link to this git reposityory.](https://github.com/Sosokker/Algebraic-Solving-Tool)
+
 ## Table of Content
 - [Calculator for Matrix and Algebra](#calculator-for-matrix-and-algebra)
   - [Table of Content](#table-of-content)
@@ -12,7 +14,9 @@ This is Text-based user interface program that use to solve matrix and algebra p
   - [Code structure](#code-structure)
   - [Install and Usage](#install-and-usage)
   - [Guide/Documentation](#guidedocumentation)
+    - [Equation](#equation)
     - [Polynomial](#polynomial)
+    - [Basic Operation](#basic-operation)
     - [Matrix](#matrix)
   - [Contributing](#contributing)
 
@@ -94,6 +98,15 @@ There are two types of command, input style.\
 
 Whitespace and Case are not matter. Command is same as command.
 
+***Syntax***
+|    operator   |  meaning  |   |   |   |
+|:-------------:|:---------:|---|---|---|
+|       +       |    add    |   |   |   |
+|       -       | substract |   |   |   |
+| * or adjacant |  multiply |   |   |   |
+|       /       |  Division |   |   |   |
+|       ^       |   Power   |   |   |   |
+
 For example.
 ````py
 [1] history
@@ -103,12 +116,64 @@ For example.
 ````
 Every command you put in and result of it will be save in **history.json** file.
 
+### Equation
+&nbsp;&nbsp;&nbsp;&nbsp;**First order** and **Second order** equation can be solved in this program. ⚠️ Other than these type of equaton can't be solved by now⚠️ ***Varible must be x*** ⚠️
+
+- <span style="color:yellow">**solve**[<span style="color:lightblue">equation or expression</span>]</span>
+-> equation/expression str
+
+  - This Command use to solve **First order** and **Second order** equation and can use like **poly[expression]** (Next command in this guide).
+
+
+  ````css
+  ===================================
+  [1]: solve[-3x^2+2x+1=2x^2-4x+1]
+  Input: -3x^2+2x+1=2x^2-4x+1
+  ===============================
+  Solution to -3x^2+2x+1=2x^2-4x+1
+  Answer #1: x = 1.2 | x = 6/5
+  Answer #2: x = -0.0 | x = 0
+  ===============================
+
+  [2]: solve[-28x^2+0.5x-14.32x^2 = 10+5-4x^3]
+  Input: -28x^2+0.5x-14.32x^2=10+5-4x^3
+  ===============================================
+  Can't find solution to this expression.(Program can only find solution up too 2nd degree polynomial)
+
+  [3]: solve[(2x-1)^2 = 0]
+  Input: (2x-1)^2=0
+  =========================
+  Solution to (2x-1)^2=0
+  Answer #1: x = -0.5 | x = -1/2
+  =========================
+  ````
+
+- <span style="color:yellow">**sim or simplify**[<span style="color:lightblue">expression</span>]</span>
+-> equation/expression str
+
+  - This Command use to simplify **First order** and **Second order** equation into expanding form.
+
+
+  ````css
+  [1]: sim[(x-1)^2]   
+  Result of Simplify: x^2-2x^1+x^0
+
+  [2]: sim[x-x^2+5x-2x^2+(3x-2)^4]
+  Result of Simplify: 81x^4-216x^3+216x^2-96x^1+16x^0
+
+  ````
+
+
 ### Polynomial
 &nbsp;&nbsp;&nbsp;&nbsp;Polynomial in this class is store in form of array. This are the following command.
-- <span style="color:yellow">Polynomial[<span style="color:lightblue">expression</span>]</span>
+- <span style="color:yellow">Polynomial or poly[<span style="color:lightblue">expression</span>]</span>
 -> expression str or list
 
-  - This Command use to print all property of the polynomial that user input.
+  - This Command use to print all property of the polynomial that user input. (Answer will be given in both fraction and float form but if answer is complex number Its will be given in floating form only)
+
+⚠️***Warning***⚠️ Can only solve first power equation, quadratic equation.
+If enter third, fourth,... degrees equation. Error will occur! ⚠️
+(Sorry about this I'didn't implement it yet)
 
   ````css
   [1]: poly[3x^2-4x-10] 
@@ -125,7 +190,7 @@ Every command you put in and result of it will be save in **history.json** file.
   Answer #1: x = 6.0901699437494745 | x = 12180339887498949/2000000000000000
   Answer #2: x = -5.0901699437494745 | x = -10180339887498949/2000000000000000
   ===============================
-  
+````
 ### Basic Operation
 &nbsp;&nbsp;&nbsp;&nbsp;Evaluate operation of Matrix, Polynomial, algebra element.
 
@@ -156,7 +221,7 @@ Every command you put in and result of it will be save in **history.json** file.
   Inverse Matrix: Matrix([[-2.0, 1.0], [1.5, -0.5]])
   ````
 
-- <span style="color:yellow">det[<span style="color:lightblue">expression</span>]</span>
+- <span style="color:yellow">**det**[<span style="color:lightblue">expression</span>]</span>
 -> expression: nested list
 
   - This Command use to find determinant of matrix.
@@ -166,7 +231,7 @@ Every command you put in and result of it will be save in **history.json** file.
   Determinant: -2
   ````
 
-- <span style="color:yellow">tranpose[<span style="color:lightblue">expression</span>]</span>
+- <span style="color:yellow">**tranpose**[<span style="color:lightblue">expression</span>]</span>
 -> expression: nested list
 
   - This Command use to find tranpose of matrix.
@@ -176,15 +241,18 @@ Every command you put in and result of it will be save in **history.json** file.
   Determinant: -2
   ````
 
-- <span style="color:yellow">inverse[<span style="color:lightblue">expression</span>]</span>
+- <span style="color:yellow">**inverse**[<span style="color:lightblue">expression</span>]</span>
 -> expression: nested list
 
   - This Command use to find inverse of matrix.
+
 
   ````css
   [1]: det[[1,2],[3,4]]    
   Determinant: -2
   ````
+  ⚠️**NOTE**⚠️ Some inverse to nxn matrix when n >= 3 sometimes not that precise. I will try to fix it again.
+
 
 ## Contributing
 
