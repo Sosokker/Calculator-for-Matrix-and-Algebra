@@ -1,6 +1,5 @@
-from parser.parser import parse_poly
-from fraction import to_fraction
-from math import sqrt
+from nessesary.parser.parser import parse_poly
+from nessesary.fraction import to_fraction
 
 class Polynomial:
     def __init__(self, poly, fracmode=False):
@@ -181,16 +180,16 @@ class Polynomial:
             else:
                 root_term = b**2-4*a*c
                 if root_term < 0:
-                    res1 = f"({-b}+{to_imag(sqrt(root_term))})/{2*a}"
-                    res2 = f"({-b}-{to_imag(sqrt(root_term))})/{2*a}"
+                    res1 = f"({-b}+{to_imag(root_term**0.5)})/{2*a}"
+                    res2 = f"({-b}-{to_imag(root_term**0.5)})/{2*a}"
                     return (res1, res2)
                 else:
                     if root_term == 0:
                         return (-b/(2*a), None)
                     else:
                         try:
-                            res1 = (-b-sqrt(root_term))/(2*a)
-                            res2 = (-b+sqrt(root_term))/(2*a)
+                            res1 = (-b-(root_term)**0.5)/(2*a)
+                            res2 = (-b+(root_term)**0.5)/(2*a)
                         except TypeError:
                             res1 = (-b-(root_term)**0.5)/(2*a)
                             res2 = (-b+(root_term)**0.5)/(2*a)                
@@ -206,7 +205,7 @@ def to_imag(num) -> str:
     >>> to_imag(-10.12)
     '10.12i'
     """
-    num = abs(float(num))
+    num = abs(num)
     return f"{num}i"
 
 # p1 = Polynomial("x^2+2x+1", fracmode=True)
