@@ -2,7 +2,7 @@ from nessesary.polynomial import Polynomial
 from nessesary.fraction import frac_of_float, Fraction, to_fraction
 from nessesary.matrix import Matrix
 from nessesary.parser.parser import insert_mul_sign, parse_poly
-from nessesary.equation.processing import poly_from_parent, poly_expand, solver, simplify, change_side
+from nessesary.equation.processing import poly_expand, solver, simplify, change_side
 
 # -------------------------- POLYNOMIAL TEST --------------------------
 
@@ -22,11 +22,13 @@ assert str(p4) == "x^9+32x^4-5x^2+1212"
 assert str(p5) == "-4x^9+1"
 assert str(p6) == "1x+1"
 assert str(p7) == "x^2+2x+1"
+assert Polynomial("3x+2").to_str() == "3x+2"
 
 assert p7.solve() == [{'real': -1.0, 'imag': 0}]
 assert Polynomial("x+1").solve() == [{'real': -1.0, 'imag': 0}]
 assert Polynomial("x+3123 -312321312+281x-32131x").solve() == [{'real': -9806.21649031366761, 'imag': 0}]
 assert Polynomial("23x^2-312x+321x^2-3+6+0+0").solve() == [{'real': 0.009719543319502776, 'imag': 0}, {'real': 0.8972572008665437, 'imag': 0}]
+
 
 # -------------------------- FRACTION TEST --------------------------
 
@@ -40,9 +42,3 @@ p3 = p1-p2
 p3.reduce_frac()
 
 assert str(p3) == str(Fraction(9068075, 50114596))
-
-# -------------------------- MATRIX TEST --------------------------
-
-# -------------------------- PARSER TEST --------------------------
-
-# -------------------------- EQUATION TEST --------------------------
