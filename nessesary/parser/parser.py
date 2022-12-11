@@ -225,6 +225,8 @@ def insert_mul_sign(expr):
             try:
                 if expr[i+1] != ")" and is_op(expr[i+1]):
                     result += ")*"
+                else:
+                    result += ")"
             except IndexError:
                 result += char
             i += 1
@@ -270,14 +272,21 @@ def parse_poly(expr: str) -> list:
     Note: Only Specific form of polynomial that
     this function can parse.
     """
+    temp1 = ''
+    for i in expr:
+        if i == " ":
+            temp1 += ""
+        else:
+            temp1 += i
+    expr = temp1
     pattern = re.compile('([-+]?\s*\d*\.?\d*)(x?\^?\d?)')
     expo_pattern = re.compile('x\^?(\d)?')
-    coeff_var_list = pattern.findall(expr)
+    coeff_var_list = pattern.findall(expr)[0:-1]
     store = {}
     highest_expo = 0
     for coeff, var in coeff_var_list:
         if not coeff: 
-            coeff = 0
+            coeff = 1
         elif coeff == '-': 
             coeff = -1
         elif coeff == '+': 
@@ -307,23 +316,10 @@ def parse_poly(expr: str) -> list:
             store[var] = temp
         else:
             store[var][0] += temp[0]
-    print(store)
+
     result = [0 for i in range(highest_expo+1)]
     for item in store.values():
         coeff = item[0]
         expo = item[1]
         result[expo] = coeff
     return result
-
-# print(parse_poly("-x^2+2x"))
-# print(make_postfix("(2-3+4)*(5+6*7)"))
-# print(make_postfix("12sin(x^2)+(4x+12*3)-5"))
-# print(insert_mul_sign("12x"))
-# print(insert_mul_sign("5x+12y+421abcde+1"))
-# print(insert_mul_sign("12((x+12x)x)"))
-# print(insert_mul_sign("xsin(x^2)"))
-# print(insert_mul_sign("xy+xsin(xy)+12x+y"))
-# print(insert_mul_sign("5(1+2*3^12)(12-5(4^2)) + (1-3*4)12"))
-# print(insert_mul_sign("(1+2)(3+4)"))
-# print(add_exp_sign("x^2^3"))
-# print(parse_poly("x^4+1+12x^3-3x^2+5"))
