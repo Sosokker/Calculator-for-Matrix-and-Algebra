@@ -182,6 +182,8 @@ def make_postfix(expr: str):
     i += 1
     return result[:len(result)-1], has_func
 
+import re
+
 def insert_mul_sign(expr):
     """
     Insert multiplication sign to expression(*)
@@ -223,7 +225,7 @@ def insert_mul_sign(expr):
                     result += "*"
         elif char == ")":
             try:
-                if expr[i+1] != ")" and is_op(expr[i+1]):
+                if expr[i+1] != ")" and is_op(expr[i+1]) and expr[i+1] != '^':
                     result += ")*"
                 else:
                     result += ")"
@@ -264,7 +266,24 @@ def insert_mul_sign(expr):
 
     return result
 
-import re
+    # matches = re.finditer(r'((?:\d+)|(?:[a-zA-Z]\w*\(\w+\)))((?:[a-zA-Z]\w*)|\()', expr)
+    # index_list = []
+    # counter = 0
+    # for i in matches:
+    #     index_list.append(i.span(1)[1] + counter)
+    #     counter += 1
+
+    # result = ''
+    # i = 0
+    # counted = 0
+    # while i <= len(expr) + counter:
+    #     if i not in index_list:
+    #         result += expr[i-counted]
+    #         i += 1
+    #     else:
+    #         result += '*'
+    #         counted += 1
+    #         i += 1
 
 def parse_poly(expr: str) -> list:
     """
