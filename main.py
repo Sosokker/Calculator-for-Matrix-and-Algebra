@@ -215,7 +215,10 @@ while True:
         except:
             print(f"Can't evaluate inverse of this matrix")
             colleted_dict["inverse"] = ""
-        
+        try:
+            write_command(todo, str(m1), colleted_dict)
+        except:
+            continue
 
     elif "det" in todo.lower():
         try:
@@ -260,7 +263,7 @@ while True:
         try:
             tran = m1.tranpose()
             print(f"Tranpose Matrix: {tran}")
-            write_command(todo, str(m1), tran)
+            write_command(todo, str(m1), str(tran))
         except:
             print(f"Error Occur! Please enter input again!")
             write_command(todo, str(m1), "")

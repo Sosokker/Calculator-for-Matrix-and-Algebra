@@ -237,8 +237,8 @@ If enter third, fourth,... degrees equation. Error will occur! ⚠️
   - This Command use to find tranpose of matrix.
 
   ````css
-  [1]: det[[1,2],[3,4]]    
-  Determinant: -2
+  [1]: tranpose[[1,2],[3,4]]
+  Tranpose Matrix: Matrix([[1, 3], [2, 4]])
   ````
 
 - <span style="color:yellow">**inverse**[<span style="color:lightblue">expression</span>]</span>
@@ -248,8 +248,9 @@ If enter third, fourth,... degrees equation. Error will occur! ⚠️
 
 
   ````css
-  [1]: det[[1,2],[3,4]]    
-  Determinant: -2
+  [1]: inverse[[1,2],[3,4]]
+  Inverse Matrix: Matrix([[-2.0, 1.0], [1.5, -0.5]])
+  NOTE: inverse of matrix 3x3 4x4 ... is not the precise but 2x2 is precise.
   ````
   ⚠️**NOTE**⚠️ Some inverse to nxn matrix when n >= 3 sometimes not that precise. I will try to fix it again.
 
