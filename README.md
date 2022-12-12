@@ -33,10 +33,11 @@ Some function maybe buggy but If the expression is not contain math function or 
 
 **Calculator for Matrix and Algebra** provide the following function.
 
-- Ability to solve for basic quadratic, cubic and quartic function.
+- Ability to solve for basic quadratic function.
 - Calculate operations of Polynomial function e.g. +/-/*/÷/^.
 - Calculate operations of Matrix e.g. Inverse/Tranpose/Basic Operation/Determinant.
 - Evaluate the expression(No Variable) that has complex parentheses.
+- Evaluate the expression(with Variable) such as First degree equation, quadratic equation.
 - Some basic algebra operation. e.g. Find reduce form of Fraction etc.
 
 ## Requirement
