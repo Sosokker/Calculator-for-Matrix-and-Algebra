@@ -7,7 +7,7 @@ def change_side(equa:str):
     Change all left side expression of = sign
     to right side.
     >>> change_side("x+2-x^2 = 32-x^3")
-    'x+2-x^2-32+x^3=0'
+    'x+2-x^2-32+x^3'
     """
     temp = ''
     for i in equa:
@@ -134,7 +134,7 @@ def poly_expand(expr:str) -> str:
                 result += char
                 continue
             else:
-                result += f'Polynomial({char})'
+                result += f'Polynomial(\'{char}\')'
     
     # print(expr, result)
     # Match:Whole poly | Group1:inside Parentheses | Group2:Expo
