@@ -6,7 +6,58 @@ from file_read_write import *
 from nessesary.equation.processing import change_side, poly_expand, simplify
 import ast
 
+def guide():
+    while True:
+        print("All of the command will be saved in history.json file.")
+        print("====================== Command List ======================")
+        print("1) solve[equation]: Solve equation and Polynomial")
+        print("2) poly[str or list]: Solve Polynomial")
+        print("3) Matrix[nested list]: Show all of that matrix property")
+        print("4) det[equation]: Find Det")
+        print("5) inverse[equation]: Find inverse matrix")
+        print("6) tranpose[equation]: show the tranpose matrix")
+        print("7) simplify[expression]: simplify the given expression")
+        print("8) history: view history from history.json")
+        print("9) clear: clear history.json")
+        print("10) delete: delete history.json")
+        print("11) guide: Open Guide file")
+        print("12) q,quit: quit the program")
+
+        print("========================== Guide ==========================")
+        print("To use this program. type in the command and expression in form of")
+        print("that command.")
+        print("==========Syntax=========")
+        print("""
+        |    operator   |  meaning  |
+        |:-------------:|:---------:|
+        |       +       |    add    |
+        |       -       | substract |
+        | * or adjacant |  multiply |
+        |       /       |  Division |
+        |       ^       |   Power   |
+        
+        """)
+
+        print("==========Example=========")
+        print("[1]: solve[(2x-1)^2 = 0]")
+        print("Input: (2x-1)^2=0")
+        print("=========================")
+        print("Solution to (2x-1)^2=0")
+        print("Answer #1: x = -0.5 | x = -1/2")
+        print("=========================")
+        u_input = input("Type q to quit the help menu[q or quit]: ")
+        try:
+            if "q" in u_input.lower():
+                break
+        except:
+            break
+
+
 print("Calculator-for-Matrix-and-Algebra")
+print("===================================")
+print("Type 'Guide' or 'guide' to open guide menu")
+print("===================================")
+print("Type 'Quit' or 'q' to quit the program")
 print("===================================")
 line_count = 1
 while True:
@@ -36,6 +87,10 @@ while True:
                 continue
         if "histo" in command:
             read_history()
+            line_count += 1
+            continue
+        if "guide" in command:
+            guide()
             line_count += 1
             continue
         todo.lower()
@@ -83,10 +138,10 @@ while True:
                 collected_answer.append(ans)
                 counting += 1
             print("="*(21+len(poly.to_str())))
-            write_command(todo, poly.to_str(), collected_answer)
+            write_command(todo, str(poly), collected_answer)
         except ValueError:
             print("Can't find solution to this expression.(Program can only find solution up too 2nd degree polynomial)")
-            write_command(todo, poly.to_str(), "")
+            write_command(todo, str(poly), "")
             pass
 
 
