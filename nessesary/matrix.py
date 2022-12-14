@@ -150,21 +150,21 @@ class Matrix:
         >>> m1.inverse().array
         [[0.2, 0.2, 0.0],[-0.2, 0.3, 1.0],[0.2, -0.3, 0.0]]
         """
-        det = self.determinant()
-        if det==0:
-            raise ValueError(f"Can't Find Inverse of this Matrix")
+        n = len(self.array)
+        A = [row[:] + [int(i == j) for j in range(n)] for i, row in enumerate(self.array)]
+        for i in range(n):
+            pivot = max(range(i, n), key=lambda j: abs(A[j][i]))
+            A[i], A[pivot] = A[pivot], A[i]
+            pivot_val = A[i][i]
+            for j in range(i, 2 * n):
+                A[i][j] /= pivot_val
+            for j in range(n):
+                if i != j:
+                    cur_val = A[j][i]
+                    for k in range(i, 2 * n):
+                        A[j][k] -= cur_val * A[i][k]
 
-        if len(self.array) == 2 and len(self.array[0]) == 2:
-            return Matrix([[self.array[1][1], -self.array[0][1]], [-self.array[1][0], self.array[0][0]]]) * (1/det)
-
-        temp = self.copy_matrix()
-        for row in range(self.row):
-            for col in range(self.column):
-                minor = lambda i, j : [row[:j] + row[j+1:] for row in (temp.array[:i]+temp.array[i+1:])]
-                minor_det = Matrix(minor(col, row)).determinant()
-                temp.array[row][col] = minor_det * (-1)**(row+col+2)
-        temp = temp.tranpose()
-        return temp * (1/det)
+        return [[round(val, 5) for val in row[n:]] for row in A]
 
     def __str__(self):
        return f'Matrix({self.array})'
@@ -174,3 +174,26 @@ if __name__ == "__main__":
     doctest.testmod()
     # Use the following line INSTEAD if you want to print all tests anyway.
     # doctest.testmod(verbose = True)
+
+
+    # def inverse_matrix(A):
+    # # Create the identity matrix
+    # I = [[0] * len(A) for i in range(len(A))]
+    # for i in range(len(I)):
+    #     I[i][i] = 1
+    # # Create the augmented matrix
+    # M = [A[i] + I[i] for i in range(len(A))]
+    # # Perform row operations until the matrix is in reduced row echelon form
+    # for i in range(len(A)):
+    #     # Find the row with the largest pivot
+    #     pivot = max(range(i, len(A)), key=lambda k: abs(M[k][i]))
+    #     # Swap the pivot row with the current row
+    #     M[i], M[pivot] = M[pivot], M[i]
+    #     # Divide the current row by the pivot element
+    #     M[i] = [M[i][j] / M[i][i] for j in range(len(A) * 2)]
+    #     # Subtract the current row from all other rows to eliminate the pivot column
+    #     for j in range(len(A)):
+    #         if i != j:
+    #             M[j] = [M[j][k] - M[i][k] * M[j][i] for k in range(len(A) * 2)]
+    # # The inverse matrix is the right half of the reduced row echelon form
+    # return [[M[i][j] for j in range(len(A), len(A) * 2)] for i in range(len(A))]
