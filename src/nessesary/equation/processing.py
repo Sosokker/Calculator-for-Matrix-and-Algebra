@@ -1,5 +1,5 @@
-from nessesary.polynomial import Polynomial
-from nessesary.parser.parser import is_op, insert_mul_sign, is_num
+from src.nessesary.polynomial import Polynomial
+from src.nessesary.parser.parser import is_op, insert_mul_sign, is_num
 import re
 
 def change_side(equa:str):

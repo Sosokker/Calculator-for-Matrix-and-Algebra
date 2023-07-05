@@ -3,7 +3,7 @@ import sys
 
 sys.path.append('..')
 
-from nessesary.preparer.PrepareExpression import PrepareExpression
+from src.preparer.PrepareExpression import PrepareExpression
 
 class TestPrepareExpression:
     preparer = PrepareExpression()

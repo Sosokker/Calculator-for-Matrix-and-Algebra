@@ -1,5 +1,5 @@
-from nessesary.parser.parser import parse_poly
-from nessesary.fraction import to_fraction
+from src.nessesary.parser.parser import parse_poly
+from src.nessesary.fraction import to_fraction
 from math import acos, cos, pi
 
 class Polynomial:

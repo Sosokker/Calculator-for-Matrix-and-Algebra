@@ -1,9 +1,9 @@
-from nessesary.matrix import Matrix
-from nessesary.parser.parser import insert_mul_sign
-from nessesary.polynomial import Polynomial
-from nessesary.fraction import to_fraction
+from src.nessesary.matrix import Matrix
+from src.nessesary.parser.parser import insert_mul_sign
+from src.nessesary.polynomial import Polynomial
+from src.nessesary.fraction import to_fraction
 from file_read_write import *
-from nessesary.equation.processing import change_side, poly_expand, simplify
+from src.nessesary.equation.processing import change_side, poly_expand, simplify
 import ast
 
 def guide():
